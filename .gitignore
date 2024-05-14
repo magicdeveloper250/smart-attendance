@@ -1,0 +1,8 @@
+__pycache__
+venv
+.env
+node-modules
+.vs
+dlib-master
+vcpkg
+boost_1_85_0
