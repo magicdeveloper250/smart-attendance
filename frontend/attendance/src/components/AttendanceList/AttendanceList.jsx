@@ -1,9 +1,15 @@
-import React from "react";
+import React, { useRef } from "react";
 import { io } from "socket.io-client";
 import { useEffect, useState } from "react";
+import "./AttendanceList.css";
+import AttendanceNav from "../AttendanceNav/AttendanceNav";
+import TimeSelector from "../TimeSelector/TimeSelector";
+import AttendanceTable from "../AttendanceTable/AttendanceTable";
 
 function AttendanceList() {
   const [dayInfo, setDayInfo] = useState([]);
+  const timeSelectorEl = useRef();
+  const [showHistory, setShowHstory] = useState(false);
 
   useEffect(() => {
     const connection = io.connect("http://localhost:5000");
@@ -33,33 +39,23 @@ function AttendanceList() {
     };
     getToDay();
   }, []);
+  useEffect(() => {
+    const el = timeSelectorEl.current;
+    showHistory == false
+      ? (el.style.display = "none")
+      : (el.style.display = "block");
+  }, [showHistory]);
   return (
     <>
-      <div className="d-flex flex-between">
-        <h1>ATTENDANCE SYSTEM</h1> <h5>{dayInfo.day}</h5>
-      </div>
-      <table className="table">
-        <thead>
-          <tr>
-            <th scope="col">id</th>
-            <th scope="col">Regnumber</th>
-            <th scope="col">name</th>
-            <th scope="col">attended</th>
-          </tr>
-        </thead>
-        <tbody>
-          {dayInfo?.attendees?.map((student, index) => {
-            return (
-              <tr key={index} scope="col">
-                <td>{student._id}</td>
-                <td>{student.reg}</td>
-                <td>{student.name}</td>
-                <td>{student.attended ? "✅" : "❌"}</td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+      <AttendanceNav
+        day={dayInfo.day}
+        onHistoryClicked={() => setShowHstory(!showHistory)}
+      />
+      <TimeSelector
+        refer={timeSelectorEl}
+        onClose={() => setShowHstory(!showHistory)}
+      />
+      <AttendanceTable data={dayInfo} />
     </>
   );
 }

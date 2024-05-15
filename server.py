@@ -16,10 +16,22 @@ def open_day():
     return jsonify({"day": new_day}), 201
 
 
+@app.route("/attendance/<date>")
+def get_attendance(date):
+    attendance = database.get_attendance(date)
+    return jsonify({"data": attendance}), 200
+
+
 @app.route("/today", methods=["GET"])
 def today():
     day = database.get_today()
     return jsonify({"day": day}), 200
+
+
+@app.route("/timeStamps", methods=["GET"])
+def get_timeStamps():
+    time_stamps = database.get_time_stamps()
+    return jsonify({"data": time_stamps}), 200
 
 
 @socketio.on("connect")

@@ -1,12 +1,17 @@
 from pymongo import MongoClient
 import datetime
-import bson
 
 client = MongoClient("mongodb://localhost:27017/").attendance_system
 
 
 def convert(attendee):
     attendee["_id"] = str(attendee["_id"])
+    return attendee
+
+
+def add_fields(attendee):
+    attendee["time"] = None
+    attendee["attended"] = False
     return attendee
 
 
@@ -20,7 +25,7 @@ def open_day():
         students = list(client.students.find())
         attendance = {
             "day": str(datetime.datetime.now().date()),
-            "attendees": [students],
+            "attendees": [list(map(add_fields, students))],
         }
         client.attendance.insert_one(attendance)
         day = client.attendance.find_one({"day": str(datetime.datetime.now().date())})
@@ -36,12 +41,18 @@ def get_today():
     return day
 
 
+def get_time_stamps():
+    time_stamps = client.attendance.find({}, {"_id": 0, "attendees": 0})
+    return list(time_stamps)
+
+
 def check_attendance(regnumber):
     # inner helper function for ticking attendance
     def tick_attendance(attendee):
-        attendee["attended"] = (
-            True if attendee["reg"] == regnumber else attendee["attended"]
-        )
+        if attendee["reg"] == regnumber and not attendee.get("attended"):
+            attendee["time"] = str(datetime.datetime.now().time())
+            attendee["attended"] = True
+            return attendee
         return attendee
 
     today_attendees = client.attendance.find_one(
@@ -59,8 +70,10 @@ def check_attendance(regnumber):
 
 
 def get_attendance(day):
-    if attendance := client.attendance.find_one({"day": day}):
-        return attendance
+    if day := client.attendance.find_one({"day": day}):
+        day["_id"] = str(day["_id"])
+        day["attendees"] = list(map(convert, day["attendees"][0]))
+        return day
     return None
 
 

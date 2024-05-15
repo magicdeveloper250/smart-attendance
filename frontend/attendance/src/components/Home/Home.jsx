@@ -24,7 +24,7 @@ function Home() {
     <div className="d-flex flex-column">
       <h1 className="text-center">Welcome to smart attendance</h1>
       <button className="btn btn-primary btn-lg" onClick={openDay}>
-        Open Day
+        Take attendance
       </button>
     </div>
   );
