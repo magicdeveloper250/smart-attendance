@@ -6,12 +6,15 @@ function TimeSelector({ refer, onClose }) {
   useEffect(() => {
     const getTimeStamps = async () => {
       try {
-        const resp = await fetch("http://localhost:5000/timeStamps", {
-          method: "GET",
-          headers: {
-            Content_Type: "application/json",
-          },
-        });
+        const resp = await fetch(
+          `${import.meta.env.VITE_SERVER_URL}/timeStamps`,
+          {
+            method: "GET",
+            headers: {
+              Content_Type: "application/json",
+            },
+          }
+        );
         const data = await resp.json();
         if (resp.ok) {
           setTimeStamps(data.data);

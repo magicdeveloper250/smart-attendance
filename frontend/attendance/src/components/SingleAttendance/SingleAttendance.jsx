@@ -17,12 +17,15 @@ function SingleAttendance() {
   useEffect(() => {
     const getAttendance = async () => {
       try {
-        const resp = await fetch(`http://localhost:5000/attendance/${day}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        const resp = await fetch(
+          `${import.meta.env.VITE_SERVER_URL}/attendance/${day}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
         const data = await resp.json();
         if (resp.ok) {
           setDayInfo(data.data);

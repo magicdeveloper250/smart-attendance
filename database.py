@@ -1,7 +1,8 @@
 from pymongo import MongoClient
 import datetime
+import os
 
-client = MongoClient("mongodb://localhost:27017/").attendance_system
+client = MongoClient(os.environ.get("DATABASE_URI")).attendance_system
 
 
 def convert(attendee):
@@ -18,26 +19,43 @@ def add_fields(attendee):
 def open_day():
     if day := client.attendance.find_one({"day": str(datetime.datetime.now().date())}):
         day["_id"] = str(day["_id"])
-        day["attendees"] = list(map(convert, day["attendees"][0]))
+        day["attendees"] = list(map(convert, day["attendees"]))
         return day
-
     else:
         students = list(client.students.find())
         attendance = {
             "day": str(datetime.datetime.now().date()),
-            "attendees": [list(map(add_fields, students))],
+            "attendees": list(map(add_fields, students)),
         }
         client.attendance.insert_one(attendance)
         day = client.attendance.find_one({"day": str(datetime.datetime.now().date())})
         day["_id"] = str(day["_id"])
-        day["attendees"] = list(map(convert, day["attendees"][0]))
+        day["attendees"] = list(map(convert, day["attendees"]))
         return day
+
+
+def add_new(name, regnumber):
+    # check if user already exists
+    if client.students.find_one({"reg": regnumber.upper()}):
+        return False
+    students = client.attendance.find_one({"day": str(datetime.datetime.now().date())})[
+        "attendees"
+    ]
+    new = {"name": name, "reg": regnumber.upper()}
+    insert_res = client.students.insert_one(new)
+    new["time"] = None
+    new["attended"] = False
+    students.append(new)
+    client.attendance.update_one(
+        {"day": str(datetime.datetime.now().date())}, {"$set": {"attendees": students}}
+    )
+    return insert_res
 
 
 def get_today():
     day = client.attendance.find_one({"day": str(datetime.datetime.now().date())})
     day["_id"] = str(day["_id"])
-    day["attendees"] = list(map(convert, day["attendees"][0]))
+    day["attendees"] = list(map(convert, day["attendees"]))
     return day
 
 
@@ -57,22 +75,22 @@ def check_attendance(regnumber):
 
     today_attendees = client.attendance.find_one(
         {"day": str(datetime.datetime.now().date())}
-    )["attendees"][0]
+    )["attendees"]
 
     client.attendance.update_one(
         {"day": str(datetime.datetime.now().date())},
-        {"$set": {"attendees": [list(map(tick_attendance, today_attendees))]}},
+        {"$set": {"attendees": list(map(tick_attendance, today_attendees))}},
     )
     day = client.attendance.find_one({"day": str(datetime.datetime.now().date())})
     day["_id"] = str(day["_id"])
-    day["attendees"] = list(map(convert, day["attendees"][0]))
+    day["attendees"] = list(map(convert, day["attendees"]))
     return day
 
 
 def get_attendance(day):
     if day := client.attendance.find_one({"day": day}):
         day["_id"] = str(day["_id"])
-        day["attendees"] = list(map(convert, day["attendees"][0]))
+        day["attendees"] = list(map(convert, day["attendees"]))
         return day
     return None
 

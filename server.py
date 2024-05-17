@@ -1,13 +1,15 @@
 from flask import Flask
-from flask_socketio import SocketIO, emit
+from flask import jsonify
 from flask import request
 from flask_cors import CORS
+from flask_socketio import SocketIO, emit
 import database
-from flask import jsonify
+import os
 
 app = Flask(__name__)
 CORS(app, origins=["*"])
 socketio = SocketIO(app, cors_allowed_origins="*")
+UPLOAD_FOLDER = os.path.join(os.getcwd(), "knownImages")
 
 
 @app.route("/openDay", methods=["POST"])
@@ -32,6 +34,19 @@ def today():
 def get_timeStamps():
     time_stamps = database.get_time_stamps()
     return jsonify({"data": time_stamps}), 200
+
+
+@app.route("/addNew", methods=["POST"])
+def add_new():
+    name, regnumber = request.form.get("name"), request.form.get("regnumber")
+    if _ := database.add_new(name, regnumber) != False:
+        # handling uploaded image
+        image = request.files.get("image")
+        _, ext = os.path.splitext(image.filename)
+        image.save(os.path.join(UPLOAD_FOLDER, f"{regnumber}{ext}"))
+        # end handling image
+        return jsonify({"message": "created"}), 201
+    return jsonify({"message": "User already exist"}), 409
 
 
 @socketio.on("connect")

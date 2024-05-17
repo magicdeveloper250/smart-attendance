@@ -1,0 +1,9 @@
+.image-preview{
+    border: 3px double black;
+    border-radius: 15px;
+    display: flex;
+    justify-content: center;
+    margin: 5px;
+    padding: 0.5em;
+    width: max-content;
+}
