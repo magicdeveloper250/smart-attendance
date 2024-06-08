@@ -1,0 +1,35 @@
+[{
+  "_id": {
+    "$oid": "6645b7a084204372b94ac42b"
+  },
+  "name": "Impano Manzi Enock",
+  "reg": "21RP06651"
+},
+{
+  "_id": {
+    "$oid": "6645b7ee84204372b94ac42c"
+  },
+  "name": "Nizeyimana Froduard",
+  "reg": "21RP01404"
+},
+{
+  "_id": {
+    "$oid": "6645b80b84204372b94ac42d"
+  },
+  "name": "Paul",
+  "reg": "21RP011111"
+},
+{
+  "_id": {
+    "$oid": "6645b82d84204372b94ac42e"
+  },
+  "name": "Claude",
+  "reg": "21RP09497"
+},
+{
+  "_id": {
+    "$oid": "6645c4d4324b8a81e55fca9c"
+  },
+  "name": "impano",
+  "reg": "21RP06653"
+}]
