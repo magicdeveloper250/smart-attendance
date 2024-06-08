@@ -44,7 +44,7 @@ def add_new():
         image = request.files.get("image")
         _, ext = os.path.splitext(image.filename)
         image.save(os.path.join(UPLOAD_FOLDER, f"{regnumber}{ext}"))
-        # end handling image
+        # end handling uploaded image
         return jsonify({"message": "created"}), 201
     return jsonify({"message": "User already exist"}), 409
 
@@ -63,6 +63,11 @@ def disconnect():
 def attend(regnumber):
     updated_attendance = database.check_attendance(regnumber)
     emit("attend", updated_attendance, broadcast=True, include_self=False)
+
+
+@socketio.on("camera_connected")
+def camera_connected(data):
+    emit("camera_connected", data, broadcast=True, include_self=False)
 
 
 @socketio.on("stream")

@@ -3,24 +3,35 @@ import face_recognition
 import threading
 import os
 import numpy as np
+import datetime
+import socketio
+import time
 
 
 class Recognizer(threading.Thread):
-    camera_url = os.environ.get("CAMERA_URL")
-    treshold = 0.3
+    treshold = 0.4
+    path = os.getcwd()
 
-    def __init__(self, sio):
+    def __init__(self, sio, cam_ip):
         threading.Thread.__init__(self)
-        self.sio = sio
+        self.sio: socketio.Client = sio
         self.path = "knownImages"
         self.images = []
         self.classNames = []
         self.myList = os.listdir(self.path)
         self.knownEncodings = []
-        try:
-            self.camera = cv2.VideoCapture(int(self.camera_url))
-        except ValueError:
-            self.camera = cv2.VideoCapture(self.camera_url)
+        self.cam_ip = cam_ip
+        self.camera = cv2.VideoCapture(self.cam_ip)
+
+    def check_camera_status(self):
+        self.camera = cv2.VideoCapture(self.cam_ip)
+        success, image = self.camera.read()
+        if success:
+            self.sio.emit("camera_connected", True)
+            return image
+        else:
+            time.sleep(1)
+            self.check_camera_status()
 
     def __findEncodings(self):
         print("finding known encodings...")
@@ -62,9 +73,7 @@ class Recognizer(threading.Thread):
         while True:
             success, img = self.camera.read()
             if not success:
-                print("Failed to read frame from video stream")
-                break
-
+                img = self.check_camera_status()
             imgS = cv2.resize(img, (0, 0), None, 0.25, 0.25)
             imgS = cv2.cvtColor(imgS, cv2.COLOR_BGR2RGB)
 
@@ -80,8 +89,12 @@ class Recognizer(threading.Thread):
                 if faceMatch < self.treshold:
                     name = self.classNames[matchIndex].upper()
                     self.sio.emit("attend", name)
+                    cv2.imwrite(
+                        os.path.join(self.path, str(datetime.datetime.now()) + ".jpg"),
+                        img,
+                    )
                 else:
-                    name = "Unknown"
+                    name = self.classNames[matchIndex].upper()
                 percentage = (1 - faceMatch) * 100
                 y1, x2, y2, x1 = faceLoc
                 y1, x2, y2, x1 = y1 * 4, x2 * 4, y2 * 4, x1 * 4
@@ -108,6 +121,7 @@ class Recognizer(threading.Thread):
             cv2.imshow("FACE RECOGNITION CAMERA", img)
             key = cv2.waitKey(1)
             if key == ord("q"):
+                self.sio.emit("camera_connected", False)
                 break
         self.camera.release()
         cv2.destroyAllWindows()
