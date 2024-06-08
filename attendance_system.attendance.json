@@ -1,0 +1,106 @@
+[{
+  "_id": {
+    "$oid": "6645b9cf577fa5347f9a5d8d"
+  },
+  "day": "2024-05-16",
+  "attendees": [
+    {
+      "_id": {
+        "$oid": "6645b7a084204372b94ac42b"
+      },
+      "name": "Impano Manzi Enock",
+      "reg": "21RP06651",
+      "time": null,
+      "attended": false
+    },
+    {
+      "_id": {
+        "$oid": "6645b7ee84204372b94ac42c"
+      },
+      "name": "Nizeyimana Froduard",
+      "reg": "21RP01404",
+      "time": "09:47:12.540042",
+      "attended": true
+    },
+    {
+      "_id": {
+        "$oid": "6645b80b84204372b94ac42d"
+      },
+      "name": "Paul",
+      "reg": "21RP011111",
+      "time": "09:47:37.555805",
+      "attended": true
+    },
+    {
+      "_id": {
+        "$oid": "6645b82d84204372b94ac42e"
+      },
+      "name": "Claude",
+      "reg": "21RP09497",
+      "time": "09:47:15.133509",
+      "attended": true
+    },
+    {
+      "name": "impano",
+      "reg": "21RP06653",
+      "_id": {
+        "$oid": "6645c4d4324b8a81e55fca9c"
+      },
+      "time": "10:33:48.726868",
+      "attended": true
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "66643ae0e17543e262e9273a"
+  },
+  "day": "2024-06-08",
+  "attendees": [
+    {
+      "_id": {
+        "$oid": "6645b7a084204372b94ac42b"
+      },
+      "name": "Impano Manzi Enock",
+      "reg": "21RP06651",
+      "time": null,
+      "attended": false
+    },
+    {
+      "_id": {
+        "$oid": "6645b7ee84204372b94ac42c"
+      },
+      "name": "Nizeyimana Froduard",
+      "reg": "21RP01404",
+      "time": "13:05:10.767986",
+      "attended": true
+    },
+    {
+      "_id": {
+        "$oid": "6645b80b84204372b94ac42d"
+      },
+      "name": "Paul",
+      "reg": "21RP011111",
+      "time": null,
+      "attended": false
+    },
+    {
+      "_id": {
+        "$oid": "6645b82d84204372b94ac42e"
+      },
+      "name": "Claude",
+      "reg": "21RP09497",
+      "time": null,
+      "attended": false
+    },
+    {
+      "_id": {
+        "$oid": "6645c4d4324b8a81e55fca9c"
+      },
+      "name": "impano",
+      "reg": "21RP06653",
+      "time": "13:05:26.557652",
+      "attended": true
+    }
+  ]
+}]
